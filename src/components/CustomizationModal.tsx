@@ -20,6 +20,7 @@ interface CustomizationModalProps {
   onClose: () => void;
   stats: UserStats;
   lang: Language;
+  onLanguageChange?: (lang: Language) => void;
   onUpdateStats: (updates: Partial<UserStats>) => void;
   onOpenCertificate: () => void;
 }
@@ -29,6 +30,7 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
   onClose,
   stats,
   lang,
+  onLanguageChange,
   onUpdateStats,
   onOpenCertificate,
 }) => {
@@ -67,8 +69,8 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in overscroll-contain">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[88dvh] overflow-y-auto shadow-2xl p-4 sm:p-8 space-y-5 sm:space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
@@ -129,6 +131,40 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
             ))}
           </div>
         </div>
+
+        {/* Language Selection */}
+        {onLanguageChange && (
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+              {lang === 'ar' ? 'لغة التطبيق' : lang === 'es' ? 'Idioma de la aplicación' : lang === 'fr' ? "Langue de l'application" : 'App Language'}
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { code: 'en' as Language, flag: '🇺🇸', label: 'English' },
+                { code: 'ar' as Language, flag: '🇸🇦', label: 'العربية' },
+                { code: 'es' as Language, flag: '🇪🇸', label: 'Español' },
+                { code: 'fr' as Language, flag: '🇫🇷', label: 'Français' },
+              ].map((item) => (
+                <button
+                  key={item.code}
+                  type="button"
+                  onClick={() => {
+                    sound.playClick();
+                    onLanguageChange(item.code);
+                  }}
+                  className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all touch-manipulation ${
+                    lang === item.code
+                      ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30 ring-2 ring-indigo-500/40'
+                      : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
+                  }`}
+                >
+                  <span className="text-base">{item.flag}</span>
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Theme Picker */}
         <div className="space-y-2">

@@ -127,6 +127,17 @@ export default function App() {
   // Navigation tab: 'curriculum' | 'timestable' | 'aihelper' | 'videos' | 'live'
   const [activeTab, setActiveTab] = useState<string>('timestable');
 
+  // Persist language selection and update document attributes
+  useEffect(() => {
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+      if (typeof document !== 'undefined') {
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+      }
+    } catch {}
+  }, [lang]);
+
   // Persist Daily Missions
   useEffect(() => {
     try {
@@ -668,6 +679,7 @@ export default function App() {
         onClose={() => setIsCustomizerOpen(false)}
         stats={stats}
         lang={lang}
+        onLanguageChange={setLang}
         onUpdateStats={handleUpdateStats}
         onOpenCertificate={() => {
           setIsCustomizerOpen(false);

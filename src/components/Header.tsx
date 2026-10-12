@@ -1,5 +1,5 @@
-import React from 'react';
-import { Flame, Trophy, Sparkles, Volume2, VolumeX, Palette, Award, Users, Globe2, Compass, HelpCircle, Target, Crown, Edit3, User } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Flame, Trophy, Sparkles, Volume2, VolumeX, Palette, Award, Users, Globe2, Compass, HelpCircle, Target, Crown, Edit3, User, Check } from 'lucide-react';
 import { UserStats, Language } from '../types';
 import { translations, formatNum } from '../utils/translations';
 import { sound } from '../utils/audio';
@@ -39,6 +39,22 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const t = translations[lang];
   const isRTL = lang === 'ar';
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80 transition-colors">
@@ -213,46 +229,103 @@ export const Header: React.FC<HeaderProps> = ({
               <Palette className="w-3.5 h-3.5 text-indigo-400" />
             </button>
 
-            {/* 4-Language Switcher (EN, AR, ES, FR) */}
-            <div className="relative group">
+            {/* 4-Language Switcher (EN, AR, ES, FR) - Touch & Click Friendly for iPad & Mobile */}
+            <div className="relative" ref={langMenuRef}>
               <button
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 font-bold text-xs transition-colors"
+                type="button"
+                onClick={() => {
+                  sound.playClick();
+                  setIsLangMenuOpen((prev) => !prev);
+                }}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-bold text-xs transition-all touch-manipulation cursor-pointer ${
+                  isLangMenuOpen
+                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                    : 'bg-indigo-600/20 hover:bg-indigo-600/30 border-indigo-500/30 text-indigo-300'
+                }`}
                 title="Change language / تغيير اللغة / Cambiar idioma / Changer de langue"
+                aria-expanded={isLangMenuOpen}
               >
                 <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
                 <span className="uppercase">{lang}</span>
-                <span className="text-[10px] opacity-70">▼</span>
+                <span className={`text-[10px] opacity-70 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`}>▼</span>
               </button>
-              <div className="absolute right-0 top-full mt-1.5 py-1.5 w-36 bg-slate-900/95 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-2xl z-50 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
-                <button
-                  onClick={() => { sound.playClick(); onLanguageChange('en'); }}
-                  className={`w-full px-3 py-1.5 text-left text-xs flex items-center justify-between hover:bg-indigo-600/20 transition-colors ${lang === 'en' ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}
-                >
-                  <span className="flex items-center gap-2"><span>🇺🇸</span> English</span>
-                  {lang === 'en' && <span>✓</span>}
-                </button>
-                <button
-                  onClick={() => { sound.playClick(); onLanguageChange('ar'); }}
-                  className={`w-full px-3 py-1.5 text-left text-xs flex items-center justify-between hover:bg-indigo-600/20 transition-colors ${lang === 'ar' ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}
-                >
-                  <span className="flex items-center gap-2"><span>🇸🇦</span> العربية</span>
-                  {lang === 'ar' && <span>✓</span>}
-                </button>
-                <button
-                  onClick={() => { sound.playClick(); onLanguageChange('es'); }}
-                  className={`w-full px-3 py-1.5 text-left text-xs flex items-center justify-between hover:bg-indigo-600/20 transition-colors ${lang === 'es' ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}
-                >
-                  <span className="flex items-center gap-2"><span>🇪🇸</span> Español</span>
-                  {lang === 'es' && <span>✓</span>}
-                </button>
-                <button
-                  onClick={() => { sound.playClick(); onLanguageChange('fr'); }}
-                  className={`w-full px-3 py-1.5 text-left text-xs flex items-center justify-between hover:bg-indigo-600/20 transition-colors ${lang === 'fr' ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}
-                >
-                  <span className="flex items-center gap-2"><span>🇫🇷</span> Français</span>
-                  {lang === 'fr' && <span>✓</span>}
-                </button>
-              </div>
+
+              {/* Language Dropdown Menu */}
+              {isLangMenuOpen && (
+                <div className="absolute right-0 rtl:right-auto rtl:left-0 top-full mt-2 py-1.5 w-40 bg-slate-900/98 backdrop-blur-xl rounded-xl border border-slate-700/80 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      onLanguageChange('en');
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left rtl:text-right text-xs flex items-center justify-between hover:bg-indigo-600/25 active:bg-indigo-600/40 transition-colors touch-manipulation cursor-pointer ${
+                      lang === 'en' ? 'text-indigo-300 font-bold bg-indigo-950/50' : 'text-slate-300'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-base">🇺🇸</span>
+                      <span>English</span>
+                    </span>
+                    {lang === 'en' && <Check className="w-3.5 h-3.5 text-indigo-400" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      onLanguageChange('ar');
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left rtl:text-right text-xs flex items-center justify-between hover:bg-indigo-600/25 active:bg-indigo-600/40 transition-colors touch-manipulation cursor-pointer ${
+                      lang === 'ar' ? 'text-indigo-300 font-bold bg-indigo-950/50' : 'text-slate-300'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-base">🇸🇦</span>
+                      <span>العربية</span>
+                    </span>
+                    {lang === 'ar' && <Check className="w-3.5 h-3.5 text-indigo-400" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      onLanguageChange('es');
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left rtl:text-right text-xs flex items-center justify-between hover:bg-indigo-600/25 active:bg-indigo-600/40 transition-colors touch-manipulation cursor-pointer ${
+                      lang === 'es' ? 'text-indigo-300 font-bold bg-indigo-950/50' : 'text-slate-300'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-base">🇪🇸</span>
+                      <span>Español</span>
+                    </span>
+                    {lang === 'es' && <Check className="w-3.5 h-3.5 text-indigo-400" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      onLanguageChange('fr');
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left rtl:text-right text-xs flex items-center justify-between hover:bg-indigo-600/25 active:bg-indigo-600/40 transition-colors touch-manipulation cursor-pointer ${
+                      lang === 'fr' ? 'text-indigo-300 font-bold bg-indigo-950/50' : 'text-slate-300'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-base">🇫🇷</span>
+                      <span>Français</span>
+                    </span>
+                    {lang === 'fr' && <Check className="w-3.5 h-3.5 text-indigo-400" />}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
