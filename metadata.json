@@ -1,0 +1,7 @@
+{
+  "name": "MathVerse - Interactive Math Academy & AI Tutor (by: fawaz alokla)",
+  "description": "Comprehensive math learning platform featuring multi-level curriculum, 1-10 times table arena, video masterclasses, Gemini AI tutor, real-time live players lobby, XP & streak gamification, cool customizations, and full English & Arabic support. Created by: fawaz alokla.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
