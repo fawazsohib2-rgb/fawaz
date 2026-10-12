@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
@@ -33,9 +34,9 @@ app.post('/api/ai/solve', async (req, res) => {
       return res.status(400).json({ error: 'Math problem is required.' });
     }
 
-    let systemPrompt = '';
-    if (language === 'ar') {
-      systemPrompt = `أنت المعلم الذكي الرياضي في منصة MathVerse التي صممها (fawaz alokla). 
+    const isArabic = language === 'ar';
+    const systemPrompt = isArabic
+      ? `أنت المعلم الذكي الرياضي في منصة MathVerse التي صممها (fawaz alokla). 
 مهمتك شرح هذه المسألة الرياضية للطالب بأسلوب تعليمي مبسط ومحفز.
 المستوى الدراسي: ${level}
 المطلوب منك تقديم إجابة بتنسيق JSON يحتوي على:
@@ -43,59 +44,29 @@ app.post('/api/ai/solve', async (req, res) => {
   "summary": "ملخص سريع للمسألة وما نحاول إيجاده",
   "finalAnswer": "النتيجة النهائية الواضحة",
   "steps": [
-    {"stepNumber": 1, "title": "عنوان الخطوة", "detail": "شرح تفصيلي ومبسط", "math": "المعادلة أو العملية الحسابية"}
+    {"stepNumber": 1, "title": "عنوان الخطوة", "detail": "شرح تفصيلي ومبسط", "math": "المعادلة أو العملية الحسابية"},
+    ...
   ],
   "ruleOrConcept": "القاعدة أو القانون الرياضي المستخدم",
   "proTip": "نصيحة ذهبية للحساب الذهني أو تجنب الأخطاء الشائعة",
   "encouragement": "كلمة تشجيعية للطالب"
 }
-تأكد أن الشرح باللغة العربية الواضحة وبشكل رياضي دقيق.`;
-    } else if (language === 'es') {
-      systemPrompt = `Eres el tutor experto en matemáticas de MathVerse creado por (fawaz alokla).
-Tu misión es enseñar y explicar este problema paso a paso para un estudiante de nivel: ${level}.
-Devuelve la respuesta estrictamente en formato JSON válido:
-{
-  "summary": "Breve resumen de lo que estamos resolviendo",
-  "finalAnswer": "La respuesta final clara",
-  "steps": [
-    {"stepNumber": 1, "title": "Título del paso", "detail": "Explicación clara y pedagógica", "math": "El cálculo o ecuación"}
-  ],
-  "ruleOrConcept": "El principio o fórmula matemática utilizada",
-  "proTip": "Un truco de cálculo mental o error común a evitar",
-  "encouragement": "Palabras motivadoras para el estudiante"
-}
-Asegúrate de que la explicación esté en español claro y matemáticamente preciso.`;
-    } else if (language === 'fr') {
-      systemPrompt = `Vous êtes le tuteur expert en mathématiques de MathVerse créé par (fawaz alokla).
-Votre mission est d'expliquer ce problème étape par étape pour un élève de niveau : ${level}.
-Retournez la réponse strictement au format JSON valide :
-{
-  "summary": "Bref résumé de ce que nous résolvons",
-  "finalAnswer": "La réponse finale claire",
-  "steps": [
-    {"stepNumber": 1, "title": "Titre de l'étape", "detail": "Explication claire et bienveillante", "math": "Le calcul ou l'équation"}
-  ],
-  "ruleOrConcept": "Le principe ou la formule mathématique utilisé",
-  "proTip": "Une astuce de calcul mental ou un piège à éviter",
-  "encouragement": "Mots d'encouragement du tuteur"
-}
-Assurez-vous que l'explication soit en français clair et rigoureux.`;
-    } else {
-      systemPrompt = `You are the friendly expert Math AI Tutor in MathVerse created by (fawaz alokla).
+تأكد أن الشرح باللغة العربية الواضحة وبشكل رياضي دقيق.`
+      : `You are the friendly expert Math AI Tutor in MathVerse created by (fawaz alokla).
 Your mission is to teach and explain this math problem step-by-step for a student at level: ${level}.
 Return your explanation strictly in valid JSON format with the following structure:
 {
   "summary": "Brief summary of what we are solving",
   "finalAnswer": "The clean final answer (e.g. x = 5 or 56)",
   "steps": [
-    {"stepNumber": 1, "title": "Step 1 title", "detail": "Clear, friendly explanation", "math": "The calculation/equation"}
+    {"stepNumber": 1, "title": "Step 1 title", "detail": "Clear, friendly explanation", "math": "The calculation/equation"},
+    ...
   ],
   "ruleOrConcept": "The fundamental mathematical principle or formula used",
   "proTip": "A mental math shortcut, mnemonic, or pitfall to avoid",
   "encouragement": "Encouraging closing words from your tutor"
 }
 Ensure accurate arithmetic and pedagogical clarity.`;
-    }
 
     const response = await ai.models.generateContent({
       model: 'gemini-3.8-flash',
@@ -137,28 +108,16 @@ app.post('/api/ai/chat', async (req, res) => {
   try {
     const { messages, language = 'en', userQuestion } = req.body;
 
-    let systemPrompt = '';
-    if (language === 'ar') {
-      systemPrompt = `أنت "المعلم الذكي فواز" (Dr. Fawaz Math AI) في منصة MathVerse التي طورها fawaz alokla.
+    const isArabic = language === 'ar';
+    const systemPrompt = isArabic
+      ? `أنت "المعلم الذكي فواز" (Dr. Fawaz Math AI) في منصة MathVerse التي طورها fawaz alokla.
 أنت معلم رياضيات ودود، صبور، يشرح المسائل بلغة سهلة مع ضرب أمثلة من الحياة اليومية.
 إذا سألك الطالب سؤالاً رياضياً، أعطه تلميحاً أولاً ثم ساعده في الوصول للحل خطوة بخطوة.
-لا تعطه الحل الجاهز فوراً إلا إذا طلب ذلك بوضوح، وشجعه دائماً بنقاط وعبارات حماسية!`;
-    } else if (language === 'es') {
-      systemPrompt = `Eres el "Tutor IA Dr. Fawaz" en MathVerse, una plataforma educativa de matemáticas creada por (fawaz alokla).
-Eres un mentor cálido, entusiasta y pedagógico.
-Ayuda a los estudiantes a comprender conceptos, guíalos con analogías intuitivas y resuelve dudas paso a paso.
-Siempre sé conciso, claro y responde en español amigable.`;
-    } else if (language === 'fr') {
-      systemPrompt = `Vous êtes le "Tuteur IA Dr. Fawaz" sur MathVerse, une plateforme éducative conçue par (fawaz alokla).
-Vous êtes un mentor bienveillant, enthousiaste et pédagogue.
-Aidez les élèves à comprendre les concepts mathématiques, donnez des indices et encouragez leurs progrès.
-Soyez concis, clair et répondez en français avec soin.`;
-    } else {
-      systemPrompt = `You are "Dr. Fawaz's AI Math Assistant" in MathVerse, an educational math platform created by (fawaz alokla).
+لا تعطه الحل الجاهز فوراً إلا إذا طلب ذلك بوضوح، وشجعه دائماً بنقاط وعبارات حماسية!`
+      : `You are "Dr. Fawaz's AI Math Assistant" in MathVerse, an educational math platform created by (fawaz alokla).
 You are a warm, enthusiastic, and pedagogical math mentor.
 Help students understand concepts, guide them with intuitive analogies (slices of pizza, balance scales, racing times), give hints, and celebrate their learning progress.
 Always be concise, clear, and formatted with clean bullet points or steps when doing calculations.`;
-    }
 
     const contents = [];
     if (Array.isArray(messages) && messages.length > 0) {
@@ -186,12 +145,7 @@ Always be concise, clear, and formatted with clean bullet points or steps when d
       },
     });
 
-    const defaultReply = 
-      language === 'ar' ? 'أحسنت المحاولة! ما السؤال التالي؟' :
-      language === 'es' ? '¡Bien pensado! ¿Qué te gustaría explorar ahora?' :
-      language === 'fr' ? 'Très bien ! Que souhaites-tu explorer ensuite ?' :
-      'Good thinking! What would you like to explore next?';
-    const reply = response.text || defaultReply;
+    const reply = response.text || (isArabic ? 'أحسنت المحاولة! ما السؤال التالي؟' : 'Good thinking! What would you like to explore next?');
     res.json({ reply });
   } catch (error: any) {
     console.error('Error in AI chat endpoint:', error);
@@ -402,6 +356,21 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    // Fallback for any client route in dev mode
+    app.use('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      if (url.startsWith('/api')) {
+        return next();
+      }
+      try {
+        let template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        template = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      } catch (e) {
+        next(e);
+      }
+    });
   } else {
     app.use(express.static(path.join(__dirname, 'dist')));
     app.get('*', (req, res) => {
