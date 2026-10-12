@@ -451,7 +451,7 @@ export default function App() {
           anyUpdated = true;
           const nextCount = m.currentCount + count;
           if (nextCount >= m.targetCount) {
-            newlyCompletedTitle = m.title[lang];
+            newlyCompletedTitle = m.title[lang] || m.title.en || '';
             earnedBonusXp += m.xpReward;
             return {
               ...m,

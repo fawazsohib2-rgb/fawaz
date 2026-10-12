@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { UserStats, Language, VideoLesson } from '../types';
 import { mathLevels } from '../data/mathCurriculum';
-import { translations, formatNum } from '../utils/translations';
+import { translations, formatNum, getLoc, getLocArr } from '../utils/translations';
 import { sound } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
 
@@ -166,7 +166,7 @@ export const VideoClassroom: React.FC<VideoClassroomProps> = ({
             </h3>
 
             <ul className="space-y-2.5">
-              {video.keyPoints[lang].map((point, idx) => (
+              {getLocArr(video.keyPoints, lang).map((point, idx) => (
                 <li
                   key={idx}
                   className="flex items-start gap-3 text-xs sm:text-sm text-slate-300"
@@ -202,13 +202,13 @@ export const VideoClassroom: React.FC<VideoClassroomProps> = ({
                   {lang === 'ar' ? 'المسألة:' : 'Problem:'}
                 </span>
                 <p className="text-base font-bold text-white">
-                  {video.practiceQuestions[activeQuestionIdx].question[lang]}
+                  {getLoc(video.practiceQuestions[activeQuestionIdx].question, lang)}
                 </p>
               </div>
 
               {/* Options */}
               <div className="space-y-2.5">
-                {video.practiceQuestions[activeQuestionIdx].options[lang].map((opt, optIdx) => {
+                {getLocArr(video.practiceQuestions[activeQuestionIdx].options, lang).map((opt, optIdx) => {
                   const isCorrect = optIdx === video.practiceQuestions[activeQuestionIdx].correctIndex;
                   const isPicked = selectedOpt === optIdx;
 

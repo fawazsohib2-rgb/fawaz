@@ -121,7 +121,7 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
             <div>
               <span className="text-xs text-slate-400 block">{lang === 'ar' ? 'مستواك الحالي' : 'Your Math Rank'}</span>
               <span className="text-sm font-black text-white">
-                {t.levelLabel} {formatNum(stats.level, stats.arabicNumerals)} · {getLoc(mathLevels[Math.min(stats.level - 1, mathLevels.length - 1)].badgeName, lang)}
+                {t.levelLabel} {formatNum(stats.level, stats.arabicNumerals)} · {mathLevels[Math.min(stats.level - 1, mathLevels.length - 1)].badgeName[lang]}
               </span>
             </div>
           </div>
@@ -161,7 +161,7 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                 </div>
                 <div className="mt-2">
                   <div className="text-xs font-extrabold truncate text-white">
-                    {getLoc(lvl.subtitle, lang)}
+                    {lvl.subtitle[lang]}
                   </div>
                   <span className="text-[10px] text-slate-400">
                     {lvl.requiredXp === 0
@@ -187,16 +187,16 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                 </span>
                 <span className="text-xs text-amber-400 font-bold flex items-center gap-1">
                   <Trophy className="w-3.5 h-3.5" />
-                  <span>{getLoc(activeLevel.badgeName, lang)}</span>
+                  <span>{activeLevel.badgeName[lang]}</span>
                 </span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black text-white">
-                {getLoc(activeLevel.title, lang)}
+                {activeLevel.title[lang]}
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                {getLoc(activeLevel.description, lang)}
+                {activeLevel.description[lang]}
               </p>
             </div>
 
@@ -215,10 +215,10 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                     <div>
                       <h4 className="text-lg font-bold text-white flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-cyan-400" />
-                        <span>{getLoc(topic.title, lang)}</span>
+                        <span>{topic.title[lang]}</span>
                       </h4>
                       <p className="text-slate-300 text-xs sm:text-sm mt-1 leading-relaxed">
-                        {getLoc(topic.summary, lang)}
+                        {topic.summary[lang]}
                       </p>
                     </div>
 
@@ -227,14 +227,14 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                       <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                       <div>
                         <span className="font-bold text-amber-300 mr-1.5">{t.levelKeyRule}:</span>
-                        <span>{getLoc(topic.keyRule, lang)}</span>
+                        <span>{topic.keyRule[lang]}</span>
                       </div>
                     </div>
 
                     {/* Step-by-Step Example */}
                     <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
                       <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                        {t.levelExample}: {getLoc(topic.example.problem, lang)}
+                        {t.levelExample}: {topic.example.problem[lang]}
                       </span>
 
                       <div className="space-y-1.5 pl-3 rtl:pl-0 rtl:pr-3 border-l-2 rtl:border-l-0 rtl:border-r-2 border-indigo-500/50">
@@ -246,7 +246,7 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                       </div>
 
                       <div className="pt-2 text-xs font-bold text-emerald-400">
-                        ✓ {t.aiFinalAnswer}: {getLoc(topic.example.answer, lang)}
+                        ✓ {t.aiFinalAnswer}: {topic.example.answer[lang]}
                       </div>
                     </div>
                   </div>
@@ -323,10 +323,10 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
 
               <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800">
                 <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-1">
-                  {getLoc(activeLevel.title, lang)}
+                  {activeLevel.title[lang]}
                 </span>
                 <h3 className="text-lg sm:text-xl font-black text-white">
-                  {getLoc(activeLevel.quiz[quizIdx].question, lang)}
+                  {activeLevel.quiz[quizIdx].question[lang]}
                 </h3>
               </div>
 
@@ -369,7 +369,7 @@ export const LevelCurriculum: React.FC<LevelCurriculumProps> = ({
                     )}
                   </div>
                   <p className="text-slate-300 text-xs leading-relaxed">
-                    {getLoc(activeLevel.quiz[quizIdx].explanation, lang)}
+                    {activeLevel.quiz[quizIdx].explanation[lang]}
                   </p>
                   <button
                     onClick={handleNextQuizQuestion}

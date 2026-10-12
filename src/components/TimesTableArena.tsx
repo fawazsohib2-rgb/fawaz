@@ -14,7 +14,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { UserStats, Language, LivePlayer } from '../types';
-import { translations, formatNum, getLoc } from '../utils/translations';
+import { translations, formatNum } from '../utils/translations';
 import { sound } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
 import { initialLivePlayers } from '../data/mathCurriculum';
@@ -296,7 +296,11 @@ export const TimesTableArena: React.FC<TimesTableArenaProps> = ({
       9: { en: 'Digit Sum 9: Multiply by 10 and subtract the number (9×7 = 70 - 7 = 63). Digits 6+3=9!', ar: 'اضرب في ١٠ واطرح العدد (٩ × ٧ = ٧٠ - ٧ = ٦٣). ومجموع الأرقام ٦+٣=٩!' },
       10: { en: 'The Zero Hero: Just place a zero at the end of any whole number! (10×8 = 80).', ar: 'بطل الصفر: فقط أضف صفراً على يمين أي عدد صحيح! (١٠ × ٨ = ٨٠).' },
     };
-    return tips[factor] ? tips[factor][lang] : (lang === 'ar' ? 'تدرب على الربط بين العمليات لتسريع البديهة' : 'Look for patterns and symmetries across factors');
+    const tip = tips[factor];
+    if (tip) {
+      return (tip as Record<string, string>)[lang] || tip.en || tip.ar;
+    }
+    return (lang === 'ar' ? 'تدرب على الربط بين العمليات لتسريع البديهة' : 'Look for patterns and symmetries across factors');
   };
 
   return (
@@ -693,13 +697,8 @@ export const TimesTableArena: React.FC<TimesTableArenaProps> = ({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* The 10x10 Matrix Table */}
-            <div className="lg:col-span-7 overflow-x-auto pb-2 -mx-2 sm:mx-0 px-2 sm:px-0">
-              <div className="text-[11px] text-slate-500 sm:hidden mb-2 flex items-center gap-1">
-                <span>👈</span>
-                <span>{lang === 'ar' ? 'اسحب الجدول أفقياً لاستعراض الشبكة كاملة' : 'Swipe table sideways to view full matrix'}</span>
-                <span>👉</span>
-              </div>
-              <div className="inline-block min-w-[480px] sm:min-w-full p-2 bg-slate-950/70 rounded-2xl border border-slate-800 shadow-inner">
+            <div className="lg:col-span-7 overflow-x-auto pb-2">
+              <div className="inline-block min-w-full p-2 bg-slate-950/70 rounded-2xl border border-slate-800 shadow-inner">
                 <div className="grid grid-cols-11 gap-1 text-center font-bold text-xs sm:text-sm">
                   {/* Top-left corner */}
                   <div className="p-2 text-indigo-400 font-black">×</div>

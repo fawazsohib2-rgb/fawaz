@@ -69,12 +69,12 @@ export const AiMathTutor: React.FC<AiMathTutorProps> = ({
   const [genAnswered, setGenAnswered] = useState(false);
 
   // Solver Sample Presets
-  const samplePresets: Array<{ en: string; ar: string; es: string; fr: string }> = [
-    { en: 'Solve: 4x + 16 = 36', ar: 'حل المعادلة: ٤س + ١٦ = ٣٦', es: 'Resolver: 4x + 16 = 36', fr: 'Résoudre : 4x + 16 = 36' },
-    { en: 'Why is 7 × 8 = 56? Explain mentally', ar: 'لماذا ٧ × ٨ = ٥٦؟ اشرحها ذهنياً', es: '¿Por qué 7 × 8 = 56? Explicar mentalmente', fr: 'Pourquoi 7 × 8 = 56 ? Expliquer mentalement' },
-    { en: 'Add fractions: 3/4 + 2/5', ar: 'اجمع الكسرين: ٣/٤ + ٢/٥', es: 'Sumar fracciones: 3/4 + 2/5', fr: 'Additionner fractions : 3/4 + 2/5' },
-    { en: 'Find hypotenuse if legs are 9 and 12', ar: 'أوجد الوتر إذا كان الضلعان ٩ و ١٢', es: 'Hallar hipotenusa con catetos 9 y 12', fr: 'Trouver l\'hypoténuse si les côtés sont 9 et 12' },
-    { en: 'How to find 25% discount on $140?', ar: 'كيف أحسب خصم ٢٥٪ على ١٤٠ ريال؟', es: '¿Cómo calcular el 25% de descuento en $140?', fr: 'Comment calculer 25% de remise sur 140€ ?' },
+  const samplePresets = [
+    { en: 'Solve: 4x + 16 = 36', ar: 'حل المعادلة: ٤س + ١٦ = ٣٦' },
+    { en: 'Why is 7 × 8 = 56? Explain mentally', ar: 'لماذا ٧ × ٨ = ٥٦؟ اشرحها ذهنياً' },
+    { en: 'Add fractions: 3/4 + 2/5', ar: 'اجمع الكسرين: ٣/٤ + ٢/٥' },
+    { en: 'Find hypotenuse if legs are 9 and 12', ar: 'أوجد الوتر إذا كان الضلعان ٩ و ١٢' },
+    { en: 'How to find 25% discount on $140?', ar: 'كيف أحسب خصم ٢٥٪ على ١٤٠ ريال؟' },
   ];
 
   // Call Server-Side Gemini Solver Endpoint
@@ -363,21 +363,19 @@ export const AiMathTutor: React.FC<AiMathTutorProps> = ({
                 {lang === 'ar' ? 'أو جرب إحدى المسائل المقترحة:' : 'Or try one of these popular problems:'}
               </span>
               <div className="flex flex-wrap gap-2">
-                {samplePresets.map((preset, idx) => {
-                  const text = getLoc(preset, lang);
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setProblemInput(text);
-                        handleSolve(text);
-                      }}
-                      className="px-3 py-1.5 rounded-lg bg-slate-950/70 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 hover:text-white transition-colors"
-                    >
-                      {text}
-                    </button>
-                  );
-                })}
+                {samplePresets.map((preset, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      const text = getLoc(preset, lang);
+                      setProblemInput(text);
+                      handleSolve(text);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-950/70 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 hover:text-white transition-colors"
+                  >
+                    {getLoc(preset, lang)}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
