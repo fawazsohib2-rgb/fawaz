@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ais-pre-3qyx3o7sbgehrjjbltkysx-686706734983.europe-west1.run.app/</loc>
+    <loc>https://fawaz-eight.vercel.app/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ais-pre-3qyx3o7sbgehrjjbltkysx-686706734983.europe-west1.run.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://ais-pre-3qyx3o7sbgehrjjbltkysx-686706734983.europe-west1.run.app/?lang=ar"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://ais-pre-3qyx3o7sbgehrjjbltkysx-686706734983.europe-west1.run.app/?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://ais-pre-3qyx3o7sbgehrjjbltkysx-686706734983.europe-west1.run.app/?lang=fr"/>
   </url>
 </urlset>
